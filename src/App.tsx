@@ -1,25 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import "./App.css";
+import { getNews } from "./actions";
+import { useDispatch } from "react-redux";
+import { useGetState } from "./hooks/useGetState";
+import { NewsList } from "./components/NewsList/NewsList";
+import styled from "styled-components";
+import { Loader } from "./components/Loader";
+import { Header } from "./components/General/Header/Header";
 
+const AppWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 function App() {
+  const news = useGetState("news");
+  const isLoading = useGetState("loading");
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getNews({ search: "", category: "general" }));
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppWrapper>
+      <Header />
+      {isLoading ? <Loader /> : <NewsList news={news} />}
+    </AppWrapper>
   );
 }
 
